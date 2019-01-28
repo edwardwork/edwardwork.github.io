@@ -217,7 +217,7 @@
             diffWeeks(){
                 this.now = new Date();
 
-                return Math.floor( (this.now.getTime() - this.startDate.getTime()) / (1000 * 3600 * 24 * 7));
+                return Math.floor( (this.now.getTime() - this.startDate.getTime()) / (1000 * 3600 * 24 * 7)) % 2;
             },
 
             getToday(){
