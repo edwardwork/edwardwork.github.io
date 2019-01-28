@@ -1,1 +1,232 @@
-<!DOCTYPE html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>service</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css><script src=https://www.gstatic.com/firebasejs/5.2.0/firebase.js></script><link href=/static/css/app.26508086b87be20bb1b17fee42a40730.css rel=stylesheet></head><body><div id=app></div><script src=https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js></script><script type=text/javascript src=/static/js/manifest.2ae2e69a05c33dfc65f8.js></script><script type=text/javascript src=/static/js/vendor.1748317793fd05195ff8.js></script><script type=text/javascript src=/static/js/app.f3aa42036907662bd1b5.js></script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+</head>
+<body>
+
+<div id="app">
+    <div class="day" v-if="getToday.length > 0">
+
+        <h1>{{ getCurrentDay() }}</h1>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Початок</th>
+                <th>Предмет</th>
+                <th>Аудиторія</th>
+                <th>Викладач</th>
+                <th>Тип</th>
+            </tr>
+            </thead>
+
+            <tbody>
+                <tr v-for="lesson in getToday" :class="{'is-selected': now.getHours() === lesson.startHour}">
+                    <th>{{ lesson.getStartTime() }}</th>
+                    <td>{{ lesson.getName() }}</td>
+                    <td><strong>{{ lesson.room }}</strong></td>
+                    <td>{{ lesson.teacher }}</td>
+                    <td>{{ lesson.type }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div v-else>
+        <h1>{{ getCurrentDay() }}</h1>
+        <h1>Сьогодні вихідний :)</h1>
+    </div>
+
+</div>
+
+<style>
+
+    .day{
+        overflow: auto;
+        text-align: center;
+    }
+    h1{
+        font-size: 36px;
+        margin: 20px 0px 20px 0px;
+    }
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+<script>
+
+    class Lesson {
+
+        constructor(startHour = 8, name = null, teacher = null, room = 'Їдальня', type = null) {
+            this.startHour = startHour;
+            this.startMinutes = 15;
+            this.name = name;
+            this.teacher = teacher;
+            this.room = room;
+            this.type = type;
+            this.endHour = startHour + 1;
+            this.endMinutes = 0;
+        }
+
+        isWindow(){
+            return this.name && this.teacher && this.room && this.type;
+        }
+
+        isCurrent(hour){
+            return hour === this.startHour;
+        }
+
+        getStartTime(){
+            return `${this.startHour}:${this.startMinutes}`;
+        }
+
+        getName(){
+            if(this.name){
+                return this.name;
+            }
+            return "Вікно :)";
+        }
+
+    }
+
+    const app = new Vue({
+        el: '#app',
+        data(){
+            return{
+                startDate: new Date(2019, 0, 28, 0, 0, 0, 0),
+                now: new Date(),
+                lessons:{
+                    // Перший тиждень
+                    0: {
+                        // Понеділок
+                        1: [
+                            new Lesson(8),
+                            new Lesson(9),
+                            new Lesson(10,'Архітектура та проектування програмного забезпечення', 'Бабюк Наталя Петрівна', 2431, 'Практика'),
+                            new Lesson(11,'Архітектура та проектування програмного забезпечення', 'Дуднік Олександр', 2128, 'Лабораторна'),
+                            new Lesson(12,'Архітектура та проектування програмного забезпечення', 'Бабюк Наталя Петрівна', 1416, 'Лекція'),
+                            new Lesson(13,'Україна в Європі і світі', 'Корнієнко В.О.', 4129, 'Лекція'),
+                        ],
+                        // Вівторок
+                        2: [
+                            new Lesson(8),
+                            new Lesson(9, "Комп'ютерна графіка", "Романюк Олександр Никифирович", 2431, 'Практика'),
+                            new Lesson(10, "Комп'ютерна графіка", "Романюк Олександр Никифирович", 2430, 'Лекція'),
+                            new Lesson(11, "Комп'ютерна графіка", "Романюк Олександр Никифирович", 2430, 'Лекція'),
+                            new Lesson(12,'Фізична культура', 'Овчарук В.Г.', 0, 'Практика'),
+                            new Lesson(13,'Фізична культура', 'Овчарук В.Г.', 0, 'Практика')
+                        ],
+                        // Середа
+                        3: [
+                            new Lesson(8, "Комп'ютерна графіка", "Денисюк Алла Василівна", 2124, "Лабораторна"),
+                            new Lesson(9, "Системне програмування", "Дорощенков Г.Д.", 2124, "Лабораторна"),
+                            new Lesson(10, "Кодування та захист інформації", "Дорощенков Г.Д.", 2124, "Лабораторна"),
+                            new Lesson(11, "Кодування та захист інформації", "Дорощенков Г.Д.", 2124, "Лабораторна"),
+                            new Lesson(12, "Україна в Європі і світі", "Корнієнко В.О.", 3227, "Практика"),
+                            new Lesson(13)
+                        ],
+                        // Четвер
+                        4: [
+                            new Lesson(8, "Екологія та основи біобезпеки і біотеки", "Васильківський І.В.", 5128, "Лекція"),
+                            new Lesson(9, "Екологія та основи біобезпеки і біотеки", "Васильківський І.В.", 5128, "Лекція"),
+                            new Lesson(10,'Кодування та захист інформації', 'Майданюк Володимир Павлович', 2420, 'Лекція'),
+                            new Lesson(11,'Кодування та захист інформації', 'Майданюк Володимир Павлович', 2420, 'Лекція'),
+                            new Lesson(12,'Системне програмування', 'Майданюк Володимир Павлович', 2203, 'Лекція'),
+                            new Lesson(13,'Основи охорони праці та безпеки життя', 'Кобилянська І.М.', 3232, 'Лекція'),
+                        ],
+                        // П'ятниця
+                        5: [
+                            new Lesson(8),
+                            new Lesson(9, 'Основи охорони праці та безпеки життя', 'Заюков І.В.', 3406, 'Лабораторна'),
+                            new Lesson(10,'Системне програмування', 'Майданюк Володимир Павлович', 1417, 'Лекція'),
+                            new Lesson(11, "Екологія та основи біобезпеки і біотеки", "Кватернюк С.М.", 7223, "Практика"),
+                            new Lesson(12,'Архітектура та проектування програмного забезпечення', 'Бабюк Наталя Петрівна', 2420, 'Лекція'),
+                            new Lesson(13,'Архітектура та проектування програмного забезпечення', 'Бабюк Наталя Петрівна', 2420, 'Лекція'),
+                        ]
+                    },
+                    // Другий тиждень
+                    1: {
+                        // Понеділок
+                        1: [
+                            new Lesson(8),
+                            new Lesson(9),
+                            new Lesson(10),
+                            new Lesson(11,'Архітектура та проектування програмного забезпечення', 'Дуднік Олександр', 2128, 'Лабораторна'),
+                            new Lesson(12,'Архітектура та проектування програмного забезпечення', 'Бабюк Наталя Петрівна', 1416, 'Лекція'),
+                            new Lesson(13,'Україна в Європі і світі', 'Корнієнко В.О.', 4129, 'Лекція'),
+                        ],
+                        // Вівторок
+                        2: [
+                            new Lesson(8),
+                            new Lesson(9, "Комп'ютерна графіка", "Романюк Олександр Никифирович", 2225, 'Практика'),
+                            new Lesson(10, "Комп'ютерна графіка", "Романюк Олександр Никифирович", 2430, 'Лекція'),
+                            new Lesson(11, "Комп'ютерна графіка", "Романюк Олександр Никифирович", 2430, 'Лекція'),
+                            new Lesson(12,'Фізична культура', 'Овчарук В.Г.', 0, 'Практика'),
+                            new Lesson(13,'Фізична культура', 'Овчарук В.Г.', 0, 'Практика')
+                        ],
+                        // Середа
+                        3: [
+                            new Lesson(8, "Комп'ютерна графіка", "Денисюк Алла Василівна", 2124, "Лабораторна"),
+                            new Lesson(9, "Системне програмування", "Дорощенков Г.Д.", 2124, "Лабораторна"),
+                            new Lesson(10, "Кодування та захист інформації", "Дорощенков Г.Д.", 2124, "Лабораторна"),
+                            new Lesson(11, "Кодування та захист інформації", "Дорощенков Г.Д.", 2124, "Лабораторна"),
+                            new Lesson(12, "Україна в Європі і світі", "Корнієнко В.О.", 3227, "Практика"),
+                            new Lesson(13)
+                        ],
+                        // Четвер
+                        4: [
+                            new Lesson(8, "Екологія та основи біобезпеки і біотеки", "Васильківський І.В.", 5128, "Лекція"),
+                            new Lesson(9, "Екологія та основи біобезпеки і біотеки", "Васильківський І.В.", 5128, "Лекція"),
+                            new Lesson(10,'Кодування та захист інформації', 'Майданюк Володимир Павлович', 2420, 'Лекція'),
+                            new Lesson(11),
+                            new Lesson(12,'Системне програмування', 'Майданюк Володимир Павлович', 2203, 'Лекція'),
+                            new Lesson(13)
+                        ],
+                        // П'ятниця
+                        5: [
+                            new Lesson(8),
+                            new Lesson(9, 'Основи охорони праці та безпеки життя', 'Заюков І.В.', 3406, 'Лабораторна'),
+                            new Lesson(10,'Системне програмування', 'Майданюк Володимир Павлович', 1417, 'Лекція'),
+                            new Lesson(11, "Екологія та основи біобезпеки і біотеки", "Кватернюк С.М.", 7223, "Практика"),
+                            new Lesson(12,'Архітектура та проектування програмного забезпечення', 'Бабюк Наталя Петрівна', 2420, 'Лекція'),
+                            new Lesson(13,'Архітектура та проектування програмного забезпечення', 'Бабюк Наталя Петрівна', 2420, 'Практика'),
+                        ]
+                    }
+
+                }
+            }
+        },
+        methods:{
+            getCurrentDay(){
+                let days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'Пятниця', 'Субота'];
+                return days[new Date().getDay()];
+            }
+        },
+        mounted(){
+
+        },
+        computed:{
+            diffWeeks(){
+                this.now = new Date();
+
+                return Math.floor( (this.now.getTime() - this.startDate.getTime()) / (1000 * 3600 * 24 * 7));
+            },
+
+            getToday(){
+                return this.lessons[this.diffWeeks][this.now.getDay()];
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
